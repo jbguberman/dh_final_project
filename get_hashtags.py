@@ -47,6 +47,20 @@ def get_tweet_data(tweet_data, id, api):
             sleep(60 * 15)
             tweet = api.statuses.show(id=id)
             return(tweet)
+        elif e.e.code == 88:
+            print("Rate limit exceeded. Sleeping for 15 minutes.")
+            sleep(60 * 15)
+            tweet = api.statuses.show(id=id)
+            return(tweet)
+        elif e.e.code == 144:
+            print("This tweet has been deleted")
+            return([''])
+        elif e.e.code == 404:
+            print("This tweet has been deleted")
+            return([''])
+        else:
+            print('a problem occcured, recovering and moving on')
+            return([''])
 
 
 def user_check(tweet_data, userID, userIDstr):
