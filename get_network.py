@@ -26,7 +26,7 @@ if __name__ == '__main__':
     config = SafeConfigParser()
     config.read('settings.cfg')
     # FILE_PATH = config.get('settings', 'json_path')
-    FILE_PATH = '/Users/Josh/Documents/dh_final_project/thedata.json'
+    FILE_PATH = 'json_data.json'
 
     # connect to the API using OAuth credentials
     # connect to the API using OAuth credentials
@@ -56,17 +56,8 @@ if __name__ == '__main__':
         except TwitterHTTPError as e:
             # if rate-limit exceeded, sleep for 15 minutes
             if e.e.code == 429:
-                print("Rate limit exceeded. Sleeping for 15 minutes.")
-                sleep(60 * 15)
-                followers = get_followers(user, screen_name, api)
-
-                tweet_data[user].update({'followers': followers})
-
-                # get friends
-                friends = get_friends(user, screen_name, api)
-
-                tweet_data[user].update({'friends': friends})
-            elif e.e.code == 88:
+                with open('tmp_usr.json', 'w') as json_data:
+                    json.dump(tweet_data, json_data)
                 print("Rate limit exceeded. Sleeping for 15 minutes.")
                 sleep(60 * 15)
                 followers = get_followers(user, screen_name, api)

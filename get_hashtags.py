@@ -35,7 +35,7 @@ def get_IDs(csvfile):
 
 
 # gets the full data for each tweetID
-def get_tweet_data(tweet_data, id, api):
+def get_tweet_data(tweet_data, id, api, runs):
     try:
         tweet = api.statuses.show(id=id)
         return(tweet)
@@ -43,6 +43,9 @@ def get_tweet_data(tweet_data, id, api):
     except TwitterHTTPError as e:
         # if rate-limit exceeded, sleep for 15 minutes
         if e.e.code == 429:
+            # saves in case something goes wrong
+            with open('tmp_data{}.json'.format(str(runs)), 'w') as jsonfile:
+                json.dump(tweet_data, jsonfile)
             print("Rate limit exceeded. Sleeping for 15 minutes.")
             sleep(60 * 15)
             tweet = api.statuses.show(id=id)
@@ -83,6 +86,8 @@ def compare_tags(old, new):
 
 # Main function
 if __name__ == '__main__':
+    # counts number of get/sleep cycles
+    runs = 0
     # gets your configuration settings from the config file
     config = SafeConfigParser()
     config.read('settings.cfg')
@@ -106,7 +111,7 @@ if __name__ == '__main__':
         # print(id)
         flag = False
         # get full tweet
-        tweet = get_tweet_data(tweet_data, id, api)
+        tweet = get_tweet_data(tweet_data, id, api, runs)
 
         # in case querry returns nothing (i.e., case of deleted tweet)
         try:
